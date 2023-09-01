@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+    environment {
+        registry = "732337975506.dkr.ecr.us-east-1.amazonaws.com"
+    }
+   
+    stages {
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/saamrajepatil/spring-petclinic']]])     
+            }
+        }
+      stage ('Build') {
+          steps {
+            script {
+                sh './mvnw package'
+            }           
+        }
+      }
+    // Building Docker images
+    stage('Building image') {
+      steps{
+        script {
+          sh 'docker build -t petdemo .'
+          sh 'docker tag petdemo:latest 732337975506.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
+        }
+      }
+    }
+   
+    // Uploading Docker images into AWS ECR
+    stage('Pushing to ECR') {
+     steps{  
+         script {
+                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 732337975506.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'docker push 732337975506.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
+         }
+        }
+      }
+
+       stage('K8S Deploy') {
+        steps{   
+            script {
+                withKubeConfig([credentialsId: 'K8S', serverUrl: 'https://B267AEA07089AC0F6748E74AD29BFAB0.gr7.us-east-1.eks.amazonaws.com']) {
+                sh ('kubectl apply -f  eks-deploy-k8s.yaml')
+                }
+            }
+        }
+       }
+    }
+}
