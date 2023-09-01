@@ -5,10 +5,10 @@ FROM amazoncorretto:17
 WORKDIR /app
 
 # Copy the JAR file from the host to the container's working directory
-COPY target/*.jar /app/app.jar
+COPY target/*.jar /app/springbootApp.jar
 
 # Expose the port that the Spring Boot application will run on
 EXPOSE 8080
 
 # Command to run the Spring Boot application
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "springbootApp.jar"]
