@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        registry = "public.ecr.aws/u5f8b1u3/petdemo"
+        registry = "864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo"
     }
    
     stages {
@@ -22,7 +22,7 @@ pipeline {
       steps{
         script {
           sh 'docker build -t petdemo .'
-          sh 'docker tag petdemo:latest public.ecr.aws/u5f8b1u3/petdemo:latest'
+          sh 'docker tag petdemo:latest 864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
         }
       }
     }
@@ -31,8 +31,8 @@ pipeline {
     stage('Pushing to ECR') {
      steps{  
          script {
-                sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u5f8b1u3'
-                sh 'docker push public.ecr.aws/u5f8b1u3/petdemo:latest'
+                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 864981759549.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'docker push 864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
          }
         }
       }
