@@ -40,7 +40,7 @@ pipeline {
        stage('K8S Deploy') {
         steps{   
             script {
-                withKubeConfig([credentialsId: 'K8S', serverUrl: 'https://7FCB9B94240722590C07A35A84643B8D.gr7.us-east-1.eks.amazonaws.com']) {
+                withKubeConfig([credentialsId: 'K8S', serverUrl: 'https://C0435D8EA856321DC590246A42617A3D.gr7.us-east-1.eks.amazonaws.com']) {
                 sh ('kubectl apply -f  eks-deploy-k8s.yaml')
                 }
             }
