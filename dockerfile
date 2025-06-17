@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/spring-petclinic*.jar /app/springbootApp.jar
 
 # Expose the port that the Spring Boot application will run on
-EXPOSE 8080
+EXPOSE 8090
 
 # Command to run the Spring Boot application
 CMD ["java", "-jar", "springbootApp.jar"]
