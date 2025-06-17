@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        registry = "864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo"
+        registry = "public.ecr.aws/x9t5d3j0/petdemo"
     }
    
     stages {
@@ -22,7 +22,7 @@ pipeline {
       steps{
         script {
           sh 'docker build -t petdemo .'
-          sh 'docker tag petdemo:latest 864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
+          sh 'docker tag petdemo:latest public.ecr.aws/x9t5d3j0/petdemo:latest'
         }
       }
     }
@@ -31,8 +31,8 @@ pipeline {
     stage('Pushing to ECR') {
      steps{  
          script {
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 864981759549.dkr.ecr.us-east-1.amazonaws.com'
-                sh 'docker push 864981759549.dkr.ecr.us-east-1.amazonaws.com/petdemo:latest'
+                sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/x9t5d3j0'
+                sh 'docker push public.ecr.aws/x9t5d3j0/petdemo:latest'
          }
         }
       }
@@ -40,8 +40,9 @@ pipeline {
        stage('K8S Deploy') {
         steps{   
             script {
-                withKubeConfig([credentialsId: 'K8S', serverUrl: 'https://618FD1EF6A0FE18597A3DC88BDAAB3E7.gr7.us-east-1.eks.amazonaws.com']) {
-                sh ('kubectl apply -f  eks-deploy-k8s.yaml')
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'EKS-1', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', serverUrl: 'https://7E7214F3DB9EF0E7CF0E9AC7193D0F5A.gr7.us-east-1.eks.amazonaws.com']]) {
+                    sh "kubectl apply -f deployment-service.yml"
+                    sleep 60
                 }
             }
         }
