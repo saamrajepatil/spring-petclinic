@@ -22,7 +22,7 @@ pipeline {
       steps{
         script {
           sh 'docker build -t petclinicnew .'
-          sh 'docker tag petdemo:latest public.ecr.aws/e3p2l8m1/petclinicnew:latest'
+          sh 'docker tag petclinicnew:latest public.ecr.aws/e3p2l8m1/petclinicnew:latest'
         }
       }
     }
